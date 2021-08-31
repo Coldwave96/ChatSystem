@@ -1,0 +1,33 @@
+import java.nio.file.Paths
+
+plugins {
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+dependencies {
+    implementation project(':base')
+}
+
+version '0.0.1'
+sourceCompatibility = 11.1
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClass = 'com.kvoli.Client'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+shadowJar {
+    archiveBaseName.set('chatclient')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    destinationDirectory.set(Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize().toFile())
+}
