@@ -35,7 +35,7 @@ public class Server {
 
     try {
       parser.parseArgument(args);
-
+      
       if (option.port < 1 || option.port > 65535) {
         System.out.println("Port error, please check.");
         System.exit(0);
