@@ -6,6 +6,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 
 public class Client {
   private int port;
@@ -20,9 +22,6 @@ public class Client {
   }
 
   static class CmdOption {
-    @Option(name = "-h", usage = "Server ipaddress")
-    private String serverIp;
-
     @Option(name = "-p", hidden = true, usage = "Service listening port")
     private int port = 4444;
   }
@@ -33,14 +32,20 @@ public class Client {
 
     Client client = new Client();
 
-    try {
-      parser.parseArgument(args);
+    String[] optionArgs = new String[2];
 
-      if (option.serverIp == null) {
+    try {
+      if (args[0] == null) {
         System.out.println("Hostname must not be null.");
         System.exit(0);
       } else {
-        client.setIp(option.serverIp);
+        client.setIp(args[0]);
+      }
+
+      if (args.length == 3) {
+        optionArgs[0] = args[1];
+        optionArgs[1] = args[2];
+        parser.parseArgument(optionArgs);
       }
 
       if (option.port < 1 || option.port > 65535) {
