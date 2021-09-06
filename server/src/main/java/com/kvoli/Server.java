@@ -12,11 +12,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Server {
   private int port;
   private boolean handler_alive = false;
+
+  public static ArrayList<Socket> socketArrayList = new ArrayList<>();
 
   public void setPort(int port) {
     this.port = port;
@@ -63,15 +66,6 @@ public class Server {
     return flag;
   }
 
-  public static String ridicule(String in) {
-    Random random = new Random();
-    StringBuilder sb = new StringBuilder();
-    for (char c : in.toCharArray()) {
-      sb.append(random.nextBoolean() ? c : Character.toUpperCase(c));
-    }
-    return sb.toString();
-  }
-
   public void handle() {
     ServerSocket serverSocket;
 
@@ -81,63 +75,13 @@ public class Server {
       System.out.printf("Listening on port %d\n", port);
       handler_alive = true;
 
-      while (handler_alive) {
+      while (true) {
         Socket newSocket = serverSocket.accept();
-        EchoConnection conn = new EchoConnection(newSocket);
-
-        if (conn != null) {
-          System.out.printf("Accepted new connection from %s:%d\n", newSocket.getLocalAddress().getCanonicalHostName(), newSocket.getPort());
-          conn.run();
-        } else {
-          handler_alive = false;
-        }
+        socketArrayList.add(newSocket);
+        new Thread(new ServerThread(newSocket)).start();
       }
     } catch (IOException e) {
-      System.out.printf("Error handling conns, %s\n", e.getMessage());
-      handler_alive = false;
-    }
-  }
-
-  class EchoConnection {
-    private Socket socket;
-    private PrintWriter writer;
-    private BufferedReader reader;
-    private boolean connection_alive;
-
-    public EchoConnection(Socket socket) throws IOException {
-      this.socket = socket;
-      this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      this.writer = new PrintWriter(socket.getOutputStream());
-    }
-
-    public void close() {
-      try {
-        reader.close();
-        writer.close();
-        socket.close();
-      } catch (IOException e) {
-        System.out.println("Error closing conn");
-      }
-    }
-
-    public void run() {
-      connection_alive = true;
-      while (connection_alive) {
-        try {
-          String inputLine = reader.readLine();
-          if (inputLine == null) {
-            connection_alive = false;
-          } else {
-            System.out.printf("%d: %s\n", socket.getPort(), inputLine);
-            writer.print(ridicule(inputLine));
-            writer.println();
-            writer.flush();
-          }
-        } catch (IOException e) {
-          connection_alive = false;
-        }
-      }
-      close();
+      System.out.printf("Error handling connections, %s\n", e.getMessage());
     }
   }
 }
