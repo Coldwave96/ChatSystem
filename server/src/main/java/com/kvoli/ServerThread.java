@@ -21,49 +21,25 @@ public class ServerThread implements Runnable {
 
         DataOutputStream out = new DataOutputStream(s.getOutputStream());
         out.writeUTF("NewIdentity message");
-        out.flush();
 
-        PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
-        printWriter.printf("Connect to %s as %s.\n", s.getLocalAddress().getHostName(),
-                Server.socketList.get(s));
+        out.writeUTF("Connect to " + s.getLocalAddress().getHostName() + " as " + Server.socketList.get(s));
 
         for (String room : Server.roomList.keySet()) {
-            printWriter.printf("%s: %d guests\n", room, Server.roomList.get(room).size());
+            out.writeUTF(room + ": " +  Server.roomList.get(room).size() +" guests");
         }
 
-        printWriter.printf("%s moves to MainHall\n", Server.socketList.get(s));
+        out.writeUTF(Server.socketList.get(s) + " moves to MainHall");
 
         for (String room : Server.roomList.keySet()) {
-            printWriter.printf("%s contains ", room);
+            StringBuilder roomMember = new StringBuilder(room + " contains ");
             for (Socket socket : Server.roomList.get(room)) {
-                printWriter.printf("%s ", Server.socketList.get(socket));
+                roomMember.append(Server.socketList.get(socket)).append(" ");
             }
-            printWriter.println();
+            out.writeUTF(String.valueOf(roomMember));
         }
-        printWriter.close();
+        out.flush();
     }
 
     public void run() {
-//        try {
-//            String content = null;
-//
-//            while ((content = readFromClient()) != null) {
-//                for (Socket s : Server.socketList) {
-//                    PrintStream ps = new PrintStream(s.getOutputStream());
-//                    ps.println(content);
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    public String readFromClient() {
-        try {
-            return br.readLine();
-        } catch (IOException e) {
-            Server.socketList.remove(s);
-        }
-        return null;
     }
 }

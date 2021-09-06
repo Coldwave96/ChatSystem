@@ -8,14 +8,12 @@ public class ClientThread implements Runnable {
 
     public ClientThread(Socket s) throws IOException {
         this.s = s;
-
         DataInputStream inputStream = new DataInputStream(s.getInputStream());
-        System.out.println(inputStream.readUTF());
 
-        String content = inputStream.readLine();
-        while (content != null) {
+        String content = inputStream.readUTF();
+        while (true) {
             System.out.println(content);
-            content = inputStream.readLine();
+            content = inputStream.readUTF();
         }
     }
 
