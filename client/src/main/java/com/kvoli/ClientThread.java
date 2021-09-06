@@ -1,6 +1,7 @@
 package com.kvoli;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -15,6 +16,14 @@ public class ClientThread implements Runnable {
     }
 
     public void run() {
+//        DataInputStream in = null;
+//        try {
+//            in = new DataInputStream(s.getInputStream());
+//            System.out.println(in.readUTF());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
         try {
             String content = null;
 

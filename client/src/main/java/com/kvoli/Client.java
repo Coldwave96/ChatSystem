@@ -71,9 +71,9 @@ public class Client {
     PrintStream ps = new PrintStream(client.getOutputStream());
     String line = null;
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    while ((line = br.readLine()) != null) {
-      ps.println(line);
-    }
+//    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//    while ((line = br.readLine()) != null) {
+//      ps.println(line);
+//    }
   }
 }

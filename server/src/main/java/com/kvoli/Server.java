@@ -10,11 +10,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Server {
   private int port;
+  private int guestId = 1;
 
-  public static ArrayList<Socket> socketArrayList = new ArrayList<>();
+  public static HashMap<Socket, String> socketList = new HashMap<>(); //<socket, identity>
+  public static HashMap<String, ArrayList<Socket>> roomList = new HashMap<>(); //<room, sockets>
+  public static HashMap<String, String> roomOwner = new HashMap<>(); //<room, owner>
 
   public void setPort(int port) {
     this.port = port;
@@ -30,6 +34,8 @@ public class Server {
     CmdLineParser parser = new CmdLineParser(option);
 
     Server server = new Server();
+    roomOwner.put("MainHall", "");
+    roomList.put("MainHall", null);
 
     try {
       parser.parseArgument(args);
@@ -70,8 +76,10 @@ public class Server {
 
       while (true) {
         Socket newSocket = serverSocket.accept();
-        socketArrayList.add(newSocket);
+        socketList.put(newSocket, "guest" + guestId);
         new Thread(new ServerThread(newSocket)).start();
+
+        guestId += 1;
       }
     } catch (IOException e) {
       System.out.printf("Error handling connections, %s\n", e.getMessage());
