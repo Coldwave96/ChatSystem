@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 // Better but not exactly idiomatic - move stuff out of the static classes and it's good.
 public class Packets {
-
   @JsonTypeInfo(
       use = JsonTypeInfo.Id.NAME,
       property = "type"

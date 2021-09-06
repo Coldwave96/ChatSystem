@@ -39,9 +39,10 @@ public class Client {
       if (args[0] == null) {
         System.out.println("Hostname must not be null.");
         System.exit(0);
+      } else if (args.length == 1) {
+        client.setIp(args[0]);
       } else if (args.length == 3) {
         client.setIp(args[0]);
-
         optionArgs[0] = args[1];
         optionArgs[1] = args[2];
         parser.parseArgument(optionArgs);
@@ -71,9 +72,9 @@ public class Client {
     PrintStream ps = new PrintStream(client.getOutputStream());
     String line = null;
 
-//    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//    while ((line = br.readLine()) != null) {
-//      ps.println(line);
-//    }
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    while ((line = br.readLine()) != null) {
+      ps.println(line);
+    }
   }
 }

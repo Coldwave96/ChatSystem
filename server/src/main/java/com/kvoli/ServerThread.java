@@ -10,7 +10,6 @@ public class ServerThread implements Runnable {
 
     public ServerThread(Socket s) throws IOException {
         this.s = s;
-        br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
         if (Server.roomList.get("MainHall") != null) {
             Server.roomList.get("MainHall").add(s);
