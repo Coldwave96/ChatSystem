@@ -36,6 +36,7 @@ public class ServerThread implements Runnable {
             }
             printWriter.println();
         }
+        printWriter.close();
     }
 
     public void run() {

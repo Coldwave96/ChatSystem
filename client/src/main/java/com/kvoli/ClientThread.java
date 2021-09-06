@@ -13,13 +13,15 @@ public class ClientThread implements Runnable {
         this.s = s;
         br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
-        String content = null;
-        while ((content = br.readLine()) != null) {
+        String content = br.readLine();
+        while (content != null) {
             System.out.println(content);
+            content = br.readLine();
         }
     }
 
     public void run() {
+        System.out.println("hello");
 //        try {
 //            String content = null;
 //

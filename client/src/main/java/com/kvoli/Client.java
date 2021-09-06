@@ -69,12 +69,12 @@ public class Client {
     Socket client = new Socket(ip, port);
     new Thread(new ClientThread(client)).start();
 
-    PrintStream ps = new PrintStream(client.getOutputStream());
-    String line = null;
-
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    while ((line = br.readLine()) != null) {
-      ps.println(line);
-    }
+//    PrintStream ps = new PrintStream(client.getOutputStream());
+//    String line = null;
+//
+//    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//    while ((line = br.readLine()) != null) {
+//      ps.println(line);
+//    }
   }
 }
