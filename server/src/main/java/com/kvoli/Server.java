@@ -6,18 +6,13 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Server {
   private int port;
-  private boolean handler_alive = false;
 
   public static ArrayList<Socket> socketArrayList = new ArrayList<>();
 
@@ -71,9 +66,7 @@ public class Server {
 
     try {
       serverSocket = new ServerSocket(port);
-
       System.out.printf("Listening on port %d\n", port);
-      handler_alive = true;
 
       while (true) {
         Socket newSocket = serverSocket.accept();

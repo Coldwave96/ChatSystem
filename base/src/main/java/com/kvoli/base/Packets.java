@@ -27,5 +27,4 @@ public class Packets {
   public static class Join extends ToServer {
     public String roomid;
   }
-
 }
