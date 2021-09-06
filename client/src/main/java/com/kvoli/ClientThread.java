@@ -1,35 +1,24 @@
 package com.kvoli;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientThread implements Runnable {
     private Socket s;
-    BufferedReader br = null;
 
     public ClientThread(Socket s) throws IOException {
         this.s = s;
-        br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
-        String content = br.readLine();
+        DataInputStream inputStream = new DataInputStream(s.getInputStream());
+        System.out.println(inputStream.readUTF());
+
+        String content = inputStream.readLine();
         while (content != null) {
             System.out.println(content);
-            content = br.readLine();
+            content = inputStream.readLine();
         }
     }
 
     public void run() {
-        System.out.println("hello");
-//        try {
-//            String content = null;
-//
-//            while ((content = br.readLine()) != null) {
-//                System.out.println(content);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 }

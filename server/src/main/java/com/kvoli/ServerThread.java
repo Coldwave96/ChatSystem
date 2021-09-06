@@ -19,6 +19,10 @@ public class ServerThread implements Runnable {
             Server.roomList.put("MainHall", newSocket);
         }
 
+        DataOutputStream out = new DataOutputStream(s.getOutputStream());
+        out.writeUTF("NewIdentity message");
+        out.flush();
+
         PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
         printWriter.printf("Connect to %s as %s.\n", s.getLocalAddress().getHostName(),
                 Server.socketList.get(s));
@@ -40,14 +44,6 @@ public class ServerThread implements Runnable {
     }
 
     public void run() {
-//        DataOutputStream out = null;
-//        try {
-//            out = new DataOutputStream(s.getOutputStream());
-//            out.writeUTF("hello");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
 //        try {
 //            String content = null;
 //

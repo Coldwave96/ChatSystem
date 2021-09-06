@@ -13,6 +13,7 @@ import java.net.Socket;
 public class Client {
   private int port;
   private String ip;
+  private String id;
 
   public void setPort(int port) {
     this.port = port;
@@ -20,6 +21,10 @@ public class Client {
 
   public void setIp(String serverIp) {
     this.ip = serverIp;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   static class CmdOption {
@@ -69,12 +74,12 @@ public class Client {
     Socket client = new Socket(ip, port);
     new Thread(new ClientThread(client)).start();
 
-//    PrintStream ps = new PrintStream(client.getOutputStream());
-//    String line = null;
-//
-//    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//    while ((line = br.readLine()) != null) {
-//      ps.println(line);
-//    }
+    PrintStream ps = new PrintStream(client.getOutputStream());
+    String line = null;
+
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    while ((line = br.readLine()) != null) {
+      ps.println(line);
+    }
   }
 }
