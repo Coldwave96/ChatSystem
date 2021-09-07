@@ -1,8 +1,13 @@
 package com.kvoli;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ServerThread implements Runnable {
     Socket s = null;
@@ -20,24 +25,41 @@ public class ServerThread implements Runnable {
         }
 
         DataOutputStream out = new DataOutputStream(s.getOutputStream());
+        ObjectMapper mapper = new ObjectMapper();
 
-        out.writeUTF("NewIdentity message");
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("type", "newidentity");
+        map1.put("former", "");
+        map1.put("identity", Server.socketList.get(s));
+        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map1));
 
-        out.writeUTF("Connect to " + s.getLocalAddress().getHostName() + " as " + Server.socketList.get(s));
-
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("type", "roomlist");
+        Map<String, Object> innerMap = new HashMap<>();
         for (String room : Server.roomList.keySet()) {
-            out.writeUTF(room + ": " +  Server.roomList.get(room).size() +" guests");
+            innerMap.put(room, Server.roomList.get(room).size());
         }
+        map2.put("rooms", innerMap);
+        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map2));
 
-        out.writeUTF(Server.socketList.get(s) + " moves to MainHall");
+        Map<String, Object> map3 = new HashMap<>();
+        map3.put("type", "roomchange");
+        map3.put("identity", Server.socketList.get(s));
+        map3.put("former", "");
+        map3.put("roomid", "MainHall");
+        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map3));
 
-        for (String room : Server.roomList.keySet()) {
-            StringBuilder roomMember = new StringBuilder(room + " contains ");
-            for (Socket socket : Server.roomList.get(room)) {
-                roomMember.append(Server.socketList.get(socket)).append(" ");
-            }
-            out.writeUTF(String.valueOf(roomMember));
+        Map<String, Object> map4 = new HashMap<>();
+        map4.put("type", "roomcontents");
+        map4.put("roomid", "MainHall");
+        List<String> roomMember = new ArrayList<>();
+        for (Socket socket : Server.roomList.get("MainHall")) {
+            roomMember.add(Server.socketList.get(socket));
         }
+        map4.put("identities", roomMember);
+        map4.put("owner", "");
+        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map4));
+
         out.flush();
     }
 

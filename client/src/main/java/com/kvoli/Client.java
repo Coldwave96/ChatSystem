@@ -9,7 +9,6 @@ import java.net.Socket;
 public class Client {
   private int port;
   private String ip;
-  private String id;
 
   public void setPort(int port) {
     this.port = port;
@@ -17,10 +16,6 @@ public class Client {
 
   public void setIp(String serverIp) {
     this.ip = serverIp;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   static class CmdOption {
