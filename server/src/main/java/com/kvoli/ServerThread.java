@@ -47,7 +47,10 @@ public class ServerThread implements Runnable {
         map3.put("identity", Server.socketList.get(s));
         map3.put("former", "");
         map3.put("roomid", "MainHall");
-        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map3));
+        for (Socket socket : Server.roomList.get("MainHall")) {
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map3));
+        }
 
         Map<String, Object> map4 = new HashMap<>();
         map4.put("type", "roomcontents");
