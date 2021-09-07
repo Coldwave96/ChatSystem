@@ -20,6 +20,7 @@ public class ServerThread implements Runnable {
         }
 
         DataOutputStream out = new DataOutputStream(s.getOutputStream());
+
         out.writeUTF("NewIdentity message");
 
         out.writeUTF("Connect to " + s.getLocalAddress().getHostName() + " as " + Server.socketList.get(s));

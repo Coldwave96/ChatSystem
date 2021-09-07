@@ -1,6 +1,5 @@
 package com.kvoli;
 
-import com.kvoli.base.Base;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;

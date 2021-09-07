@@ -10,6 +10,12 @@ dependencies {
     implementation project(':base')
     // https://mvnrepository.com/artifact/args4j/args4j
     implementation 'args4j:args4j:2.33'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.4'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.4'
 }
 
 version '0.0.1'
