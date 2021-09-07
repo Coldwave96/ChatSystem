@@ -13,7 +13,7 @@ public class ServerThread implements Runnable {
     Socket s = null;
     BufferedReader br = null;
 
-    public ServerThread(Socket s) throws IOException {
+    public ServerThread(Socket s) throws IOException, InterruptedException {
         this.s = s;
 
         if (Server.roomList.get("MainHall") != null) {
@@ -63,9 +63,18 @@ public class ServerThread implements Runnable {
         map4.put("owner", "");
         out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map4));
 
+        out.writeUTF("done");
+
         out.flush();
+        out.close();
     }
 
     public void run() {
+        try {
+            DataInputStream in = new DataInputStream(s.getInputStream());
+            DataOutputStream out = new DataOutputStream(s.getOutputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

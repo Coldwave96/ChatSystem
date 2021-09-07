@@ -7,22 +7,37 @@ import com.kvoli.base.Packet;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ClientThread implements Runnable {
     private Socket s;
     private String id;
+    private String roomid;
 
     public ClientThread(Socket s) throws IOException {
         this.s = s;
         DataInputStream inputStream = new DataInputStream(s.getInputStream());
 
-        while (true) {
-            String content = inputStream.readUTF();
+        String content = null;
+        while (!(content = inputStream.readUTF()).equals("done")) {
             handleContent(content);
         }
+        inputStream.close();
     }
 
     public void run() {
+        try {
+            DataInputStream in = new DataInputStream(s.getInputStream());
+            DataOutputStream out = new DataOutputStream(s.getOutputStream());
+
+            Scanner kb = new Scanner(System.in);
+            while (true) {
+                System.out.printf("[%s] %s>", roomid, id);
+                String input = kb.nextLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void handleContent(String content) throws JsonProcessingException {
@@ -41,6 +56,7 @@ public class ClientThread implements Runnable {
                 break;
             case "roomchange":
                 System.out.println(packet.getIdentity() + " moves to " + packet.getRoomid());
+                roomid = packet.getRoomid();
                 break;
             case "roomcontents":
                 System.out.println(packet.getRoomid() + " contains " + packet.getIdentities());

@@ -79,7 +79,7 @@ public class Server {
 
         guestId += 1;
       }
-    } catch (IOException e) {
+    } catch (IOException | InterruptedException e) {
       System.out.printf("Error handling connections, %s\n", e.getMessage());
     }
   }
