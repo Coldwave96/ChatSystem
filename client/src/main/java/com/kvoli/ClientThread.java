@@ -34,6 +34,30 @@ public class ClientThread implements Runnable {
             while (true) {
                 System.out.printf("[%s] %s>", roomid, id);
                 String input = kb.nextLine();
+                String[] command = input.split(" ");
+
+                switch (command[0]) {
+                    case "#identitychange":
+                        //sth to do
+                    case "#join":
+                        //sth to do
+                    case "#who":
+                        //sth to do
+                    case "#list":
+                        //sth to do
+                    case "#createroom":
+                        //sth to do
+                    case "#deleteroom":
+                        //sth to do
+                    case "#quit":
+                        //sth to do
+                    default:
+                        //sth yo do
+                }
+
+                if (command[0].equals("#quit")) {
+                    break;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
