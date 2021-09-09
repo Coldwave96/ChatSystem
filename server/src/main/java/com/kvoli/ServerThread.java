@@ -63,7 +63,7 @@ public class ServerThread implements Runnable {
         map4.put("owner", "");
         out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map4));
 
-        out.writeUTF("done");
+        out.writeUTF("EOF");
 
         out.flush();
         out.close();

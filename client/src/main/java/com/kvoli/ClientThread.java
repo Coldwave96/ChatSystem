@@ -19,10 +19,13 @@ public class ClientThread implements Runnable {
         DataInputStream inputStream = new DataInputStream(s.getInputStream());
 
         String content = null;
-        while (!(content = inputStream.readUTF()).equals("done")) {
-            handleContent(content);
+        while ((content = inputStream.readUTF()) != null) {
+            if (content.equals("EOF")) {
+                break;
+            } else {
+                handleContent(content);
+            }
         }
-        inputStream.close();
     }
 
     public void run() {
