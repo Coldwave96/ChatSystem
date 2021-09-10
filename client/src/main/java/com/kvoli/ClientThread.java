@@ -7,6 +7,9 @@ import com.kvoli.base.Packet;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ClientThread implements Runnable {
@@ -14,24 +17,24 @@ public class ClientThread implements Runnable {
     private String id;
     private String roomid;
 
-    public ClientThread(Socket s) throws IOException {
+    public ClientThread(Socket s) {
         this.s = s;
-        DataInputStream inputStream = new DataInputStream(s.getInputStream());
-
-        String content = null;
-        while ((content = inputStream.readUTF()) != null) {
-            if (content.equals("EOF")) {
-                break;
-            } else {
-                handleContent(content);
-            }
-        }
     }
 
     public void run() {
         try {
             DataInputStream in = new DataInputStream(s.getInputStream());
             DataOutputStream out = new DataOutputStream(s.getOutputStream());
+            ObjectMapper mapper = new ObjectMapper();
+
+            while (true) {
+                String content = in.readUTF();
+                if (!content.equals("EOF")) {
+                    handleContent(content);
+                } else {
+                    break;
+                }
+            }
 
             Scanner kb = new Scanner(System.in);
             while (true) {
@@ -41,7 +44,15 @@ public class ClientThread implements Runnable {
 
                 switch (command[0]) {
                     case "#identitychange":
-                        //sth to do
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("type", "identitychange");
+                        map.put("identity", command[1]);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
+                        out.flush();
+
+                        String reponse = in.readUTF();
+                        handleContent(reponse);
+                        break;
                     case "#join":
                         //sth to do
                     case "#who":
@@ -56,6 +67,12 @@ public class ClientThread implements Runnable {
                         //sth to do
                     default:
                         //sth yo do
+                        break;
+                }
+
+                while (true) {
+                    String response = in.readUTF();
+                    handleContent(response);
                 }
 
                 if (command[0].equals("#quit")) {
@@ -73,8 +90,14 @@ public class ClientThread implements Runnable {
 
         switch (packet.getType()) {
             case "newidentity":
-                System.out.println("Connect to " + s.getRemoteSocketAddress() + " as " + packet.getIdentity());
-                id = packet.getIdentity();
+                if (Objects.equals(packet.getFormer(), "")) {
+                    System.out.println("Connect to " + s.getRemoteSocketAddress() + " as " + packet.getIdentity());
+                    id = packet.getIdentity();
+                } else if (packet.getFormer() != null && packet.getFormer().equals(packet.getIdentity())) {
+                    System.out.println("Requested identity invalid or in use.");
+                } else {
+                    System.out.println(packet.getFormer() + " is now " + packet.getIdentity());
+                }
                 break;
             case "roomlist":
                 for (String room : packet.getRooms().keySet()) {
