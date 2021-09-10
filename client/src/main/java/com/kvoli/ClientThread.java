@@ -50,8 +50,8 @@ public class ClientThread implements Runnable {
                         out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
                         out.flush();
 
-                        String reponse = in.readUTF();
-                        handleContent(reponse);
+                        String response = in.readUTF();
+                        handleContent(response);
                         break;
                     case "#join":
                         //sth to do
@@ -68,11 +68,6 @@ public class ClientThread implements Runnable {
                     default:
                         //sth yo do
                         break;
-                }
-
-                while (true) {
-                    String response = in.readUTF();
-                    handleContent(response);
                 }
 
                 if (command[0].equals("#quit")) {
