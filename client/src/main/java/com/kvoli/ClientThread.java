@@ -27,53 +27,105 @@ public class ClientThread implements Runnable {
             DataOutputStream out = new DataOutputStream(s.getOutputStream());
             ObjectMapper mapper = new ObjectMapper();
 
-            while (true) {
-                String content = in.readUTF();
-                if (!content.equals("EOF")) {
-                    handleContent(content);
-                } else {
-                    break;
-                }
-            }
-
             Scanner kb = new Scanner(System.in);
+
+            mainLoop:
             while (true) {
+                while (true) {
+                    try {
+                        String content = in.readUTF();
+                        handleContent(content);
+                    } catch (Exception e) {
+                        break;
+                    }
+                }
+
                 System.out.printf("[%s] %s>", roomid, id);
                 String input = kb.nextLine();
                 String[] command = input.split(" ");
 
                 switch (command[0]) {
                     case "#identitychange":
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("type", "identitychange");
-                        map.put("identity", command[1]);
-                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
+                        Map<String, Object> map1 = new HashMap<>();
+                        map1.put("type", "identitychange");
+                        map1.put("identity", command[1]);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map1));
+                        out.flush();
+                        break;
+                    case "#join":
+                        Map<String, Object> map2 = new HashMap<>();
+                        map2.put("type", "join");
+                        map2.put("roomid", command[1]);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map2));
+                        out.flush();
+                        break;
+                    case "#who":
+                        Map<String, Object> map3 = new HashMap<>();
+                        map3.put("type", "who");
+                        map3.put("roomid", command[1]);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map3));
+                        out.flush();
+                        break;
+                    case "#list":
+                        Map<String, Object> map4 = new HashMap<>();
+                        map4.put("type", "list");
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map4));
+                        out.flush();
+                        break;
+                    case "#createroom":
+                        Map<String, Object> map5 = new HashMap<>();
+                        map5.put("type", "createroom");
+                        map5.put("roomid", command[1]);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map5));
                         out.flush();
 
                         String response = in.readUTF();
-                        handleContent(response);
+                        Packet packet = mapper.readValue(response, Packet.class);
+                        if (packet.getType().equals("roomlist")) {
+                            System.out.println("Room " + command[1] + " created.");
+                        } else if (packet.getType().equals("roomcontents")) {
+                            System.out.println("Room " + command[1] + " is invalid or already in use.");
+                        } else {
+                            handleContent(response);
+                        }
                         break;
-                    case "#join":
-                        //sth to do
-                    case "#who":
-                        //sth to do
-                    case "#list":
-                        //sth to do
-                    case "#createroom":
-                        //sth to do
-                    case "#deleteroom":
-                        //sth to do
-                    case "#quit":
-                        //sth to do
-                    default:
-                        //sth yo do
-                        break;
-                }
+                    case "#delete":
+                        Map<String, Object> map6 = new HashMap<>();
+                        map6.put("type", "delete");
+                        map6.put("roomid", command[1]);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map6));
+                        out.flush();
 
-                if (command[0].equals("#quit")) {
-                    break;
+                        roomid = "MainHall";
+
+                        String deleteResponse = in.readUTF();
+                        Packet deletePacket = mapper.readValue(deleteResponse, Packet.class);
+                        if (deletePacket.getType().equals("roomlist")) {
+                            handleContent(deleteResponse);
+                        } else if (deletePacket.getType().equals("roomcontent")) {
+                            System.out.println("You are not the owner of room " + command[1]);
+                        } else {
+                            handleContent(deleteResponse);
+                        }
+                        break;
+                    case "#quit":
+                        Map<String, Object> map7 = new HashMap<>();
+                        map7.put("type", "quit");
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map7));
+                        out.flush();
+                        break mainLoop;
+                    default:
+                        Map<String, Object> map8 = new HashMap<>();
+                        map8.put("type", "message");
+                        map8.put("content", input);
+                        out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map8));
+                        out.flush();
+                        break;
                 }
             }
+            in.close();
+            out.close();
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,11 +152,18 @@ public class ClientThread implements Runnable {
                 }
                 break;
             case "roomchange":
-                System.out.println(packet.getIdentity() + " moves to " + packet.getRoomid());
+                if (packet.getFormer().equals("MainHall") || Objects.equals(packet.getFormer(), "")) {
+                    System.out.println(packet.getIdentity() + " moves to " + packet.getRoomid());
+                } else {
+                    System.out.println(packet.getIdentity() + " moved from " + packet.getFormer() + " to " + packet.getRoomid());
+                }
                 roomid = packet.getRoomid();
                 break;
             case "roomcontents":
                 System.out.println(packet.getRoomid() + " contains " + packet.getIdentities());
+                break;
+            case "message":
+                System.out.println(packet.getIdentity() + ": " + packet.getContent());
                 break;
         }
     }
