@@ -7,10 +7,7 @@ import com.kvoli.base.Packet;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class ClientThread implements Runnable {
     private Socket s;
@@ -44,7 +41,7 @@ public class ClientThread implements Runnable {
                 String input = kb.nextLine();
                 String[] command = input.split(" ");
 
-                switch (command[0]) {
+                switch (command[0].toLowerCase()) {
                     case "#identitychange":
                         Map<String, Object> map1 = new HashMap<>();
                         map1.put("type", "identitychange");
