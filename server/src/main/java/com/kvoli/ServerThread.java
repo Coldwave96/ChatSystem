@@ -45,7 +45,7 @@ public class ServerThread implements Runnable {
                 outputStream.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map2));
             }
 
-            roomContentMessage(out, mapper);
+            roomContentMessage(out, mapper, "MainHall");
             out.writeUTF("EOF");
 
             out.flush();
@@ -127,7 +127,7 @@ public class ServerThread implements Runnable {
                             out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(joinMap1));
                             if (command.getRoomid().equals("MainHall")) {
                                 roomListMessage(out, mapper);
-                                roomContentMessage(out, mapper);
+                                roomContentMessage(out, mapper, "MainHall");
                             }
 
                             out.writeUTF("EOF");
@@ -145,7 +145,7 @@ public class ServerThread implements Runnable {
 
                             if (command.getRoomid().equals("MainHall")) {
                                 roomListMessage(out, mapper);
-                                roomContentMessage(out, mapper);
+                                roomContentMessage(out, mapper, "MainHall");
                             }
 
                             out.writeUTF("EOF");
@@ -153,7 +153,7 @@ public class ServerThread implements Runnable {
                         }
                         break;
                     case "who":
-                        roomContentMessage(out, mapper);
+                        roomContentMessage(out, mapper, command.getRoomid());
                         out.writeUTF("EOF");
                         out.flush();
                         break;
@@ -172,7 +172,7 @@ public class ServerThread implements Runnable {
                             Server.roomList.put(command.getRoomid(), sockets);
                             roomListMessage(out, mapper);
                         } else {
-                            roomContentMessage(out, mapper);
+                            roomContentMessage(out, mapper, command.getRoomid());
                         }
                         out.writeUTF("EOF");
                         out.flush();
@@ -202,7 +202,7 @@ public class ServerThread implements Runnable {
 
                                 Server.roomList.get("MainHall").add(s);
                                 roomListMessage(outputStream, mapper);
-                                roomContentMessage(outputStream, mapper);
+                                roomContentMessage(outputStream, mapper, command.getRoomid());
 
                                 outputStream.writeUTF("EOF");
                                 outputStream.flush();
@@ -214,7 +214,7 @@ public class ServerThread implements Runnable {
 
                             roomListMessage(out, mapper);
                         } else {
-                            roomContentMessage(out, mapper);
+                            roomContentMessage(out, mapper, command.getRoomid());
                         }
                         out.writeUTF("EOF");
                         out.flush();
@@ -288,16 +288,20 @@ public class ServerThread implements Runnable {
         out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
     }
 
-    private void roomContentMessage(DataOutputStream out, ObjectMapper mapper) throws IOException {
+    private void roomContentMessage(DataOutputStream out, ObjectMapper mapper, String roomid) throws IOException {
         Map<String, Object> map = new HashMap<>();
         map.put("type", "roomcontents");
-        map.put("roomid", "MainHall");
+        map.put("roomid", roomid);
         List<String> roomMember = new ArrayList<>();
-        for (Socket socket : Server.roomList.get("MainHall")) {
-            roomMember.add(Server.socketList.get(socket));
+        for (Socket socket : Server.roomList.get(roomid)) {
+            if (Server.roomOwner.containsValue(Server.socketList.get(socket))) {
+                roomMember.add(Server.socketList.get(socket) + '*');
+            } else {
+                roomMember.add(Server.socketList.get(socket));
+            }
         }
         map.put("identities", roomMember);
-        map.put("owner", "");
+        map.put("owner", Server.roomOwner.get(roomid));
         out.writeUTF(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
     }
 }
