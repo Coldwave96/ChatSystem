@@ -96,13 +96,14 @@ public class ClientThread implements Runnable {
                         roomid = "MainHall";
 
                         String deleteResponse = in.readUTF();
-                        Packet deletePacket = mapper.readValue(deleteResponse, Packet.class);
-                        if (deletePacket.getType().equals("roomlist")) {
-                            handleContent(deleteResponse);
-                        } else if (deletePacket.getType().equals("roomcontent")) {
-                            System.out.println("You are not the owner of room " + command[1]);
+                        if (deleteResponse.equals("EOF")) {
+                            System.out.println("Error! Room " + command[1] + " does not existed " +
+                                    "or you are not the owner of room " + command[1]);
                         } else {
-                            handleContent(deleteResponse);
+                            Packet deletePacket = mapper.readValue(deleteResponse, Packet.class);
+                            if (deletePacket.getType().equals("roomlist")) {
+                                handleContent(deleteResponse);
+                            }
                         }
                         break;
                     case "#quit":

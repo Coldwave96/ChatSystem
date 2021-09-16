@@ -214,7 +214,7 @@ public class ServerThread implements Runnable {
 
                             roomListMessage(out, mapper);
                         } else {
-                            roomContentMessage(out, mapper, command.getRoomid());
+                            out.writeUTF("EOF");
                         }
                         out.writeUTF("EOF");
                         out.flush();
