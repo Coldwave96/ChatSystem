@@ -77,13 +77,13 @@ public class ClientThread implements Runnable {
                         out.flush();
 
                         String response = in.readUTF();
-                        Packet packet = mapper.readValue(response, Packet.class);
-                        if (packet.getType().equals("roomlist")) {
-                            System.out.println("Room " + command[1] + " created.");
-                        } else if (packet.getType().equals("roomcontents")) {
+                        if (response.equals("EOF")) {
                             System.out.println("Room " + command[1] + " is invalid or already in use.");
                         } else {
-                            handleContent(response);
+                            Packet packet = mapper.readValue(response, Packet.class);
+                            if (packet.getType().equals("roomlist")) {
+                                System.out.println("Room " + command[1] + " created.");
+                            }
                         }
                         break;
                     case "#delete":

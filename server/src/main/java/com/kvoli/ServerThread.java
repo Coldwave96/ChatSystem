@@ -172,7 +172,7 @@ public class ServerThread implements Runnable {
                             Server.roomList.put(command.getRoomid(), sockets);
                             roomListMessage(out, mapper);
                         } else {
-                            roomContentMessage(out, mapper, command.getRoomid());
+                            out.writeUTF("EOF");
                         }
                         out.writeUTF("EOF");
                         out.flush();
