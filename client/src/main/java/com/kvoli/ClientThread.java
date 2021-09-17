@@ -125,7 +125,8 @@ public class ClientThread implements Runnable {
             out.close();
             System.exit(0);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Something wrong happens. Please check!");
+            System.exit(0);
         }
     }
 
