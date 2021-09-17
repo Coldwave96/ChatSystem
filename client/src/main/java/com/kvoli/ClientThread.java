@@ -9,10 +9,25 @@ import java.io.*;
 import java.net.Socket;
 import java.util.*;
 
+/*
+ * This is ClientThread class extended from Tread class. It is used for handling socket
+ * connection with the server. At meantime, the thread will also wait for the user input.
+ *
+ * The client supports 7 command plus a message.
+ * #identitychange: user could change identity
+ * #join: user could join a room
+ * #who: user could request for a list of all the clients in a room
+ * #list: user could request for a list of all the rooms in the server
+ * #createroom: user could create a new room
+ * #deleteroom: user could delete the room which he or she created
+ * #quit: user could exit the chat system
+ *
+ * All the other input will be regarded as message.
+ */
 public class ClientThread implements Runnable {
-    private Socket s;
-    private String id;
-    private String roomid;
+    private Socket s; //socket
+    private String id; //client identity
+    private String roomid; //room's name
 
     public ClientThread(Socket s) {
         this.s = s;
@@ -28,6 +43,7 @@ public class ClientThread implements Runnable {
 
             mainLoop:
             while (true) {
+                //handle previous response messages before user input
                 while (true) {
                     try {
                         String content = in.readUTF();
@@ -37,10 +53,12 @@ public class ClientThread implements Runnable {
                     }
                 }
 
+                //user input
                 System.out.printf("[%s] %s>", roomid, id);
                 String input = kb.nextLine();
                 String[] command = input.split(" ");
 
+                //deal with commands and messages
                 switch (command[0].toLowerCase()) {
                     case "#identitychange":
                         Map<String, Object> map1 = new HashMap<>();
@@ -130,6 +148,7 @@ public class ClientThread implements Runnable {
         }
     }
 
+    //a method using for handling response message
     public void handleContent(String content) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Packet packet = mapper.readValue(content, Packet.class);

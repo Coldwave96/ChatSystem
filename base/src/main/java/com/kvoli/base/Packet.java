@@ -11,22 +11,27 @@ import java.util.Map;
 
 @JsonIgnoreProperties(value = {"other"})
 
+/*
+  The Packet class is used for generating response messages objects. And Jackson helps to
+  transform the JSON format String which send by clients to the Packet object. The structure
+  of response messages are shown in the README.md file.
+ */
 public class Packet {
-    private String type;
+    private String type; //message type
 
-    private String former;
-    private String identity;
+    private String former; //former identity/room
+    private String identity; //client identity
 
-    private String roomid;
+    private String roomid; //room's name
 
-    private List<String> identities = new ArrayList<>();
-    private String owner;
+    private List<String> identities = new ArrayList<>(); //all clients in the room
+    private String owner; //room owner
 
-    private String content;
+    private String content; //message content
 
-    private Map<String, Object> rooms = new HashMap<>();
+    private Map<String, Object> rooms = new HashMap<>(); //room list
 
-    private Map<String, Object> other = new HashMap<>();
+    private Map<String, Object> other = new HashMap<>(); //other field
 
     public String getType() {
         return type;

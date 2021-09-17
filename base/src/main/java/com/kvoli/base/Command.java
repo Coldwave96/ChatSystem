@@ -9,12 +9,18 @@ import java.util.Map;
 
 @JsonIgnoreProperties(value = {"other"})
 
+/*
+  The Command class is used for generating command message objects when user enter a command.
+  Then the command message will be sent to the chat server via JSON format string. Jackson is
+  used to transform JSON string to a Command object. Some values field will be reused in
+  different command message. The structure of command messages are shown in the README.md file.
+ */
 public class Command {
-    private String type;
+    private String type; //message type
 
-    private String identity;
-    private String roomid;
-    private String content;
+    private String identity; //identity
+    private String roomid; //room's name
+    private String content; //message content
 
     public String getType() {
         return type;

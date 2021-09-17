@@ -6,9 +6,14 @@ import org.kohsuke.args4j.Option;
 
 import java.net.Socket;
 
+/*
+ * This is the main class of the client. After started the client program, client will try to
+ * connect to the given server. Once socket connection established, client will apply for a
+ * thread to handle the socket connection.
+ */
 public class Client {
-  private int port;
-  private String ip;
+  private int port; //server port
+  private String ip; //server ip
 
   public void setPort(int port) {
     this.port = port;
@@ -18,6 +23,7 @@ public class Client {
     this.ip = serverIp;
   }
 
+  //command line setter
   static class CmdOption {
     @Option(name = "-p", hidden = true, usage = "Service listening port")
     private int port = 4444;
@@ -61,6 +67,7 @@ public class Client {
     client.handle();
   }
 
+  //start a thread to handle the socket connection
   public void handle() throws Exception {
     Socket client = new Socket(ip, port);
     new Thread(new ClientThread(client)).start();
